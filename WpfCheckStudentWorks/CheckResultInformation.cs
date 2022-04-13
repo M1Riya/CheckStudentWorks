@@ -11,24 +11,44 @@ namespace WpfCheckStudentWorks
     {
         public event PropertyChangedEventHandler PropertyChanged;
         string file1;
+        string text1;
         string file2;
+        string text2;
         double result;
-        public string File1
+        public string File1_name
         {
             get => file1;
             set
             {
                 file1 = value;
-                OnPropertyChanged("File1");
+                OnPropertyChanged("File1_name");
             }
         }
-        public string File2
+        public string Text_File1
+        {
+            get => text1;
+            set
+            {
+                text1 = value;
+                OnPropertyChanged("Text_File1");
+            }
+        }
+        public string File2_name
         {
             get => file2;
             set
             {
                 file2 = value;
-                OnPropertyChanged("File2");
+                OnPropertyChanged("File2_name");
+            }
+        }
+        public string Text_File2
+        {
+            get => text2;
+            set
+            {
+                text2 = value;
+                OnPropertyChanged("Text_File2");
             }
         }
         public double Result
@@ -40,12 +60,13 @@ namespace WpfCheckStudentWorks
                 OnPropertyChanged("Result");
             }
         }
-        public CheckResultInformation(string file1, string file2, double res)
+        public CheckResultInformation(string file1, string text1, string file2, string text2, double res)
         {
-            File1 = file1;
-            File2 = file2;
+            File1_name = file1;
+            Text_File1 = text1;
+            File2_name = file2;
+            Text_File2 = text2;
             Result = res;
-
         }
         public void OnPropertyChanged(string prop = "")
         {

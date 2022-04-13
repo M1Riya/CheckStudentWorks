@@ -16,7 +16,7 @@ namespace WpfCheckStudentWorks
         BaseCommand openCommand;
         DialogWindow dialogW;
         List<TextInformation> allText = new List<TextInformation>();
-        public ObservableCollection<CheckResultInformation> checkStudWorkAllInf  { get; set; }
+        public ObservableCollection<CheckResultInformation> checkStudWorkAllInf { get; set; }
         public void OnPropertyChanged(string prop = "")
         {
             if (PropertyChanged != null)
@@ -62,18 +62,10 @@ namespace WpfCheckStudentWorks
                             for (int j = i + 1; j < allText.Count; j++)
                             {
                                 double checkResult = MethodShingles.CheckSumCompair(i, j);
-                                if (checkResult > 2)
+                                if (checkResult > 2)                    //разместить выбор порога для пользолвателя рядом с OPEN !!!!!
                                 {
-                                    CheckResultInformation res = new CheckResultInformation(allText[i].FileName, allText[j].FileName, checkResult);
+                                    CheckResultInformation res = new CheckResultInformation(allText[i].FileName, allText[i].Text, allText[j].FileName, allText[j].Text, checkResult);
                                     checkStudWorkAllInf.Add(res);
-                                   /* StringBuilder sb = new StringBuilder();
-                                    sb.Append(allText[i].FileName)
-                                        .Append(" - ")
-                                        .Append(allText[j].FileName)
-                                        .Append(": ")
-                                        .Append(checkResult)
-                                        .Append("%");
-                                    checkStudWorkAllInf.Add(sb.ToString());*/
                                 }
                             }
                     }

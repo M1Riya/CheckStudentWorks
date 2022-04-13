@@ -59,13 +59,13 @@ namespace WpfCheckStudentWorks
                     match.Add(checkSum[text_1].OriginShingle[j]);
                 }
 
-            
+            //if (Math.Round(same / different * 100, 1)>2)
             //  OutputMatchedText(checkSum[text_1].Text, checkSum[text_2].Text, match);
 
             return Math.Round(same / different * 100, 1);
         }
 
-        static void OutputMatchedText(string text1, string text2, List<string> match)
+        static void OutputMatchedText(string text1, string text2, List<string> match)           //может вытащить во viewmodel?
         {
 
             string[] txt1Words = text1.Replace("\n", "").Replace("\r", " ").Split(' ');

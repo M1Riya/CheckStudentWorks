@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfCheckStudentWorks
 {
-    public class CheckSumInformation
+    public class CheckSumInformation        //сделаьть наследование от TextInformation?
     {
         string file_name;
         string text;

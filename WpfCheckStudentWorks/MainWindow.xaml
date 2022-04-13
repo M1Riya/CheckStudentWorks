@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfCheckStudentWorks"
         mc:Ignorable="d"
-        Title="StudChecker" Height="750" Width="1500">
-    <Grid Background="#E6E6FA">
+        Title="WorkChecker" Height="750" Width="1500">
+    <Grid Background="#FFFFFF">
         <Grid.RowDefinitions >
             <RowDefinition Height="0.07*"></RowDefinition>
             <RowDefinition ></RowDefinition>
@@ -15,7 +15,7 @@
             <ColumnDefinition Width="0.4*"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ToolBar Background="#E6E6FA" BorderBrush="#4B0082" BorderThickness="1" Grid.ColumnSpan="2" >
+        <ToolBar Background="#FFFFFF" BorderBrush="#808080" BorderThickness="1" Grid.ColumnSpan="2" >
             <Button>
                 <Image Source="Images\574421.png" />
             </Button>
@@ -25,12 +25,12 @@
             </Button>
         </ToolBar>
         <DockPanel Grid.Column="0" Grid.Row="1">
-            <ListBox   Background="#9370DB" BorderThickness="0" ItemsSource="{Binding checkStudWorkAllInf}">
+            <ListBox   Background="#F0FFF0" BorderThickness="1" BorderBrush="#808080" ItemsSource="{Binding checkStudWorkAllInf}">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Margin" Value="5"/>
                         <Setter Property="Padding" Value="5"/>
-                        <Setter Property="Background" Value="#9370DB"/>
+                        <Setter Property="Background" Value="#F0FFF0"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -55,9 +55,9 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5" Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=File1}"  FontSize="16" FontFamily="Times New Roman"/>
+                            <TextBlock Text="{Binding Path=File1_name}"  FontSize="16" FontFamily="Times New Roman"/>
                             <TextBlock Text=" - " FontSize="16" FontFamily="Times New Roman"/>
-                            <TextBlock Text="{Binding Path=File2}"  FontSize="16" FontFamily="Times New Roman"/>
+                            <TextBlock Text="{Binding Path=File2_name}"  FontSize="16" FontFamily="Times New Roman"/>
                             <TextBlock Text=": " FontSize="16" FontFamily="Times New Roman"/>
                             <TextBlock Text="{Binding Path=Result}" FontWeight="Bold"  FontSize="16" FontFamily="Times New Roman"/>
                             <TextBlock Text="%"  FontSize="16" FontFamily="Times New Roman"/>
