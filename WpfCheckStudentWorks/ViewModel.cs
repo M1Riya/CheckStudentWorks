@@ -14,6 +14,8 @@ namespace WpfCheckStudentWorks
     {
         public event PropertyChangedEventHandler PropertyChanged;
         BaseCommand openCommand;
+        BaseCommand openCommandFolder;
+        BaseCommand runCommand;
         DialogWindow dialogW;
         List<TextInformation> allText = new List<TextInformation>();
         public ObservableCollection<CheckResultInformation> checkStudWorkAllInf { get; set; }
@@ -28,14 +30,14 @@ namespace WpfCheckStudentWorks
             checkStudWorkAllInf = new ObservableCollection<CheckResultInformation>();
 
         }
-        public BaseCommand OpenCommand
+        public BaseCommand OpenCommandFolder
         {
             get
             {
-                return openCommand ?? (openCommand = new BaseCommand(obj =>
+                return openCommandFolder ?? (openCommandFolder = new BaseCommand(obj =>
                 {
 
-                    if (dialogW.OpenDialog() == true)
+                    if (dialogW.OpenFolderDialog() == true)
                     {
                         allText.Clear();
                         var txtFiles = Directory.EnumerateFiles(dialogW.FolderPath);
@@ -55,7 +57,52 @@ namespace WpfCheckStudentWorks
 
                             allText.Add(inf);
                         }
-                        /*вынести отдельно. Нужно дожидатьсыя завершения заполнения*/
+
+                    }
+                }));
+            }
+        }
+
+        public BaseCommand OpenCommandFiles
+        {
+            get
+            {
+                return openCommand ?? (openCommand = new BaseCommand(obj =>
+                {
+
+                    if (dialogW.OpenFileDialog() == true)
+                    {
+                        allText.Clear();
+                        foreach (string currentFile in dialogW.FilesPath)
+                        {
+                            string text = "";
+                            string extension = currentFile.Substring(currentFile.IndexOf('.'));
+
+                            if (extension == ".docx")
+                            { text = OpenWordprocessingDocumentReadonly(currentFile); }
+                            else if (extension == ".pdf")
+                            { text = OpenPdfMethod(currentFile); }
+
+                            TextInformation inf = new TextInformation();
+                            inf.Text = text;
+                            inf.FileName = Path.GetFileName(currentFile);
+
+                            allText.Add(inf);
+                        }
+
+                    }
+                }));
+            }
+        }
+
+        public BaseCommand RunCommand
+        {
+            get
+            {
+                return runCommand ?? (runCommand = new BaseCommand(obj =>
+                {
+                    if (allText != null)
+                    {                       
                         MethodShingles.ShinglCreate(allText);
                         checkStudWorkAllInf.Clear();
                         for (int i = 0; i < allText.Count - 1; i++)
@@ -69,6 +116,7 @@ namespace WpfCheckStudentWorks
                                 }
                             }
                     }
+                   
                 }));
             }
         }

@@ -60,7 +60,7 @@ namespace WpfCheckStudentWorks
                 }
 
             //if (Math.Round(same / different * 100, 1)>2)
-            //  OutputMatchedText(checkSum[text_1].Text, checkSum[text_2].Text, match);
+             // OutputMatchedText(checkSum[text_1].Text, checkSum[text_2].Text, match);
 
             return Math.Round(same / different * 100, 1);
         }

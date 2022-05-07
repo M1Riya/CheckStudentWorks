@@ -8,22 +8,34 @@
         Title="WorkChecker" Height="750" Width="1500">
     <Grid Background="#FFFFFF">
         <Grid.RowDefinitions >
-            <RowDefinition Height="0.07*"></RowDefinition>
+            <RowDefinition Height="0.05*"></RowDefinition>
             <RowDefinition ></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions >
             <ColumnDefinition Width="0.4*"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ToolBar Background="#FFFFFF" BorderBrush="#808080" BorderThickness="1" Grid.ColumnSpan="2" >
+        <!--ToolBar Background="#FFFFFF" BorderBrush="#808080" BorderThickness="1" Grid.ColumnSpan="2" >
             <Button>
                 <Image Source="Images\574421.png" />
             </Button>
             <Button  Command="{Binding OpenCommand}" FontFamily="Times New Roman" FontSize="25">
-                <!-- Source="25402.png" /-->
+                < Source="25402.png" >
                 Open
             </Button>
-        </ToolBar>
+        </ToolBar /-->
+        <Menu Height="34" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <MenuItem Header="Open" FontSize="20" FontFamily="Times New Roman">
+                <!--MenuItem.Icon>
+                    <Image Source="Images\25402.png"></Image>
+                </MenuItem.Icon /-->
+                <MenuItem Header="Open Files" FontSize="15" Command="{Binding OpenCommandFiles}">
+                </MenuItem>
+                <MenuItem Header="Open Folder" FontSize="15" Command="{Binding OpenCommandFolder}"></MenuItem>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Run" FontSize="20" FontFamily="Times New Roman" Command="{Binding RunCommand}"></MenuItem>
+        </Menu>
         <DockPanel Grid.Column="0" Grid.Row="1">
             <ListBox   Background="#F0FFF0" BorderThickness="1" BorderBrush="#808080" ItemsSource="{Binding checkStudWorkAllInf}">
                 <ListBox.ItemContainerStyle>
