@@ -1,34 +1,53 @@
 ﻿using BitMiracle.Docotic.Pdf;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
-using System.Text;
 
 namespace WpfCheckStudentWorks
 {
     public class ViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        CheckResultInformation selectedResult; 
         BaseCommand openCommand;
         BaseCommand openCommandFolder;
         BaseCommand runCommand;
         DialogWindow dialogW;
         List<TextInformation> allText = new List<TextInformation>();
-        public ObservableCollection<CheckResultInformation> checkStudWorkAllInf { get; set; }
-        public void OnPropertyChanged(string prop = "")
+        string selectedPercent;
+        public CheckResultInformation SelectedResult
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            get => selectedResult;
+            set
+            {
+                selectedResult = value;
+                OnPropertyChanged("SelectedResult");
+            }
         }
+        public string SelectedPercent
+        {
+            get => selectedPercent;
+            set
+            {
+                selectedPercent = value;
+                OnPropertyChanged("SelectedPercent");
+            }
+        }
+        public ObservableCollection<CheckResultInformation> checkStudWorkAllInf { get; set; }
         public ViewModel(DialogWindow d)
         {
             dialogW = d;
             checkStudWorkAllInf = new ObservableCollection<CheckResultInformation>();
 
+        }
+        public void OnPropertyChanged(string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
         public BaseCommand OpenCommandFolder
         {
@@ -54,6 +73,7 @@ namespace WpfCheckStudentWorks
                             TextInformation inf = new TextInformation();
                             inf.Text = text;
                             inf.FileName = Path.GetFileName(currentFile);
+                            inf.FilePath = Path.GetFullPath(currentFile);
 
                             allText.Add(inf);
                         }
@@ -86,6 +106,7 @@ namespace WpfCheckStudentWorks
                             TextInformation inf = new TextInformation();
                             inf.Text = text;
                             inf.FileName = Path.GetFileName(currentFile);
+                            inf.FilePath = Path.GetFullPath(currentFile);
 
                             allText.Add(inf);
                         }
@@ -94,44 +115,16 @@ namespace WpfCheckStudentWorks
                 }));
             }
         }
-
-        public BaseCommand RunCommand
-        {
-            get
-            {
-                return runCommand ?? (runCommand = new BaseCommand(obj =>
-                {
-                    if (allText != null)
-                    {                       
-                        MethodShingles.ShinglCreate(allText);
-                        checkStudWorkAllInf.Clear();
-                        for (int i = 0; i < allText.Count - 1; i++)
-                            for (int j = i + 1; j < allText.Count; j++)
-                            {
-                                double checkResult = MethodShingles.CheckSumCompair(i, j);
-                                if (checkResult > 2)                    //разместить выбор порога для пользолвателя рядом с OPEN !!!!!
-                                {
-                                    CheckResultInformation res = new CheckResultInformation(allText[i].FileName, allText[i].Text, allText[j].FileName, allText[j].Text, checkResult);
-                                    checkStudWorkAllInf.Add(res);
-                                }
-                            }
-                    }
-                   
-                }));
-            }
-        }
-
         static string OpenWordprocessingDocumentReadonly(string filepath)        //работа с docx
         {
-            // Open a WordprocessingDocument based on a filepath.
             using (WordprocessingDocument wordDocument =
                 WordprocessingDocument.Open(filepath, false))
             {
-                // Assign a reference to the existing document body.  
                 Body body = wordDocument.MainDocumentPart.Document.Body;
                 return body.InnerText.ToString();
             }
             return "-1";
+
         }
         static string OpenPdfMethod(string filepath)     //работа с pdf
         {
@@ -142,5 +135,40 @@ namespace WpfCheckStudentWorks
             }
             return "-1";
         }
+        public BaseCommand RunCommand
+        {
+            get
+            {
+                return runCommand ?? (runCommand = new BaseCommand(obj =>
+                {
+                    if (allText != null)
+                    {
+                        checkStudWorkAllInf.Clear();
+                        MethodShingles.ShinglCreate(allText);                       
+                        int _percent = 0;
+                        if (SelectedPercent != null)
+                        {
+                            string percent = SelectedPercent.Split(' ')[1];
+                            _percent = Convert.ToInt32(percent.Substring(0, percent.IndexOf('%')));
+                        }
+                        for (int i = 0; i < allText.Count - 1; i++)
+                            for (int j = i + 1; j < allText.Count; j++)
+                            {
+                                double checkResult = MethodShingles.CheckSumCompair(i, j);
+                                                             
+                                if (checkResult > _percent)                    
+                                {
+                                    CheckResultInformation res = new CheckResultInformation(allText[i].FileName, allText[i].FilePath, allText[i].Text, 
+                                                                    allText[j].FileName, allText[j].FilePath, allText[j].Text, checkResult);
+                                    checkStudWorkAllInf.Add(res);
+                                }
+                            }
+                    }
+
+                }));
+            }
+        }
+
+
     }
 }

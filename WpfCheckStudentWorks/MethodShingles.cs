@@ -11,6 +11,7 @@ namespace WpfCheckStudentWorks
         static List<CheckSumInformation> checkSum = new List<CheckSumInformation>();          //контрольная сумма всех шинглов для каждого текста
         public static void ShinglCreate(List<TextInformation> inf)
         {
+            checkSum.Clear();
             int shingleLen = 5;                                     // или 6?
             for (int i = 0; i < inf.Count; i++)
             {

@@ -5,39 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfCheckStudentWorks"
         mc:Ignorable="d"
-        Title="WorkChecker" Height="750" Width="1500">
+        Title="WorkChecker" Height="800" Width="1700">
     <Grid Background="#FFFFFF">
         <Grid.RowDefinitions >
-            <RowDefinition Height="0.05*"></RowDefinition>
+            <RowDefinition Height="0.04*"></RowDefinition>
             <RowDefinition ></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions >
-            <ColumnDefinition Width="0.4*"></ColumnDefinition>
+            <ColumnDefinition Width="0.6*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <!--ToolBar Background="#FFFFFF" BorderBrush="#808080" BorderThickness="1" Grid.ColumnSpan="2" >
-            <Button>
-                <Image Source="Images\574421.png" />
-            </Button>
-            <Button  Command="{Binding OpenCommand}" FontFamily="Times New Roman" FontSize="25">
-                < Source="25402.png" >
-                Open
-            </Button>
-        </ToolBar /-->
-        <Menu Height="34" VerticalAlignment="Top" Grid.ColumnSpan="2">
+        <Menu Grid.ColumnSpan="2" >
             <MenuItem Header="Open" FontSize="20" FontFamily="Times New Roman">
                 <!--MenuItem.Icon>
                     <Image Source="Images\25402.png"></Image>
                 </MenuItem.Icon /-->
-                <MenuItem Header="Open Files" FontSize="15" Command="{Binding OpenCommandFiles}">
-                </MenuItem>
+                <MenuItem Header="Open Files" FontSize="15" Command="{Binding OpenCommandFiles}"></MenuItem>
                 <MenuItem Header="Open Folder" FontSize="15" Command="{Binding OpenCommandFolder}"></MenuItem>
             </MenuItem>
-            <Separator />
             <MenuItem Header="Run" FontSize="20" FontFamily="Times New Roman" Command="{Binding RunCommand}"></MenuItem>
         </Menu>
+        <ToolBar Grid.Column="2" Grid.Row="0" Background="#F0F0F0">
+            <TextBlock  FontSize="15" Text="Select the percentage of similarity:  "></TextBlock>
+            <ComboBox SelectedIndex="1" Width="50" SelectedItem="{Binding SelectedPercent}">
+                <ComboBoxItem>2%</ComboBoxItem>
+                <ComboBoxItem>10%</ComboBoxItem>
+                <ComboBoxItem>30%</ComboBoxItem>
+                <ComboBoxItem>50%</ComboBoxItem>
+                <ComboBoxItem>60%</ComboBoxItem>
+                <ComboBoxItem>70%</ComboBoxItem>
+            </ComboBox>
+        </ToolBar>
         <DockPanel Grid.Column="0" Grid.Row="1">
-            <ListBox   Background="#F0FFF0" BorderThickness="1" BorderBrush="#808080" ItemsSource="{Binding checkStudWorkAllInf}">
+            <ListBox   Background="#F0FFF0" BorderThickness="1" ItemsSource="{Binding checkStudWorkAllInf}" SelectedItem="{Binding SelectedResult}">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Margin" Value="5"/>
@@ -63,7 +64,7 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
-                </ListBox.ItemContainerStyle>
+                </ListBox.ItemContainerStyle >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5" Orientation="Horizontal">
@@ -77,7 +78,18 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
         </DockPanel>
+        <!--RichTextBox x:Name="docBox" Grid.Column="1" Grid.Row="1"  >
+        </RichTextBox /-->
+        <UniformGrid Grid.Column="1" Grid.Row="1" DataContext="{Binding SelectedResult}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding Path=Text_File1}" TextWrapping="WrapWithOverflow"/>
+            </ScrollViewer>
+        </UniformGrid>
+        <UniformGrid Grid.Column="2" Grid.Row="1" DataContext="{Binding SelectedResult}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding Path=Text_File2}" TextWrapping="WrapWithOverflow"/>
+            </ScrollViewer>
+        </UniformGrid>
     </Grid>
 </Window>

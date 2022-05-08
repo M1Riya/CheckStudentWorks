@@ -15,26 +15,26 @@ namespace WpfCheckStudentWorks
 
         public string FileName
         {
-            get { return file_name; }
-            set { file_name = value; }
+            get => file_name; 
+            set => file_name = value; 
         }
 
         public string Text
         {
-            get { return text; }
-            set { text = value; }
+            get => text; 
+            set => text = value; 
         }
 
         public List<string> HashShingle
         {
-            get { return hash_shingle; }
-            set { hash_shingle = value; }
+            get => hash_shingle; 
+            set => hash_shingle = value; 
         }
 
         public List<string> OriginShingle
         {
-            get { return origin_shingle; }
-            set { origin_shingle = value; }
+            get => origin_shingle; 
+            set => origin_shingle = value; 
         }
 
         public CheckSumInformation()
