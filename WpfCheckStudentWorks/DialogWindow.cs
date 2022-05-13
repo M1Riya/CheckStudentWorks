@@ -22,8 +22,6 @@ namespace WpfCheckStudentWorks
             {
                 foreach (string filename in fileDialog.FileNames)
                     FilesPath.Add(Path.GetFullPath(filename));
-
-                //FilterIndex = f.FilterIndex;
                 return true;
             }
             return false;

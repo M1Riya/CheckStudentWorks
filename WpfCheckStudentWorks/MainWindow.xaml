@@ -22,19 +22,22 @@
                     <Image Source="Images\25402.png"></Image>
                 </MenuItem.Icon /-->
                 <MenuItem Header="Open Files" FontSize="15" Command="{Binding OpenCommandFiles}"></MenuItem>
+                <Separator />
                 <MenuItem Header="Open Folder" FontSize="15" Command="{Binding OpenCommandFolder}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Run" FontSize="20" FontFamily="Times New Roman" Command="{Binding RunCommand}"></MenuItem>
         </Menu>
         <ToolBar Grid.Column="2" Grid.Row="0" Background="#F0F0F0">
-            <TextBlock  FontSize="15" Text="Select the percentage of similarity:  "></TextBlock>
+            <TextBlock  FontSize="15" Text="Select the percentage of similarity:  " VerticalAlignment="Center"></TextBlock>
             <ComboBox SelectedIndex="1" Width="50" SelectedItem="{Binding SelectedPercent}">
-                <ComboBoxItem>2%</ComboBoxItem>
+                <ComboBoxItem>4%</ComboBoxItem>
                 <ComboBoxItem>10%</ComboBoxItem>
                 <ComboBoxItem>30%</ComboBoxItem>
+                <ComboBoxItem>40%</ComboBoxItem>
                 <ComboBoxItem>50%</ComboBoxItem>
                 <ComboBoxItem>60%</ComboBoxItem>
                 <ComboBoxItem>70%</ComboBoxItem>
+                <ComboBoxItem>80%</ComboBoxItem>
             </ComboBox>
         </ToolBar>
         <DockPanel Grid.Column="0" Grid.Row="1">
@@ -50,7 +53,7 @@
                                     <Border x:Name="brd" Background="{TemplateBinding Background}" 
                                             BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                         <RadioButton Focusable="False" Margin="{TemplateBinding Padding}" Foreground="{TemplateBinding Foreground}"
-                                                          IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}">
+                                                          IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}" Click="Load_Click">
                                             <ContentPresenter/>
                                         </RadioButton>
                                     </Border>
@@ -79,17 +82,19 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
-        <!--RichTextBox x:Name="docBox" Grid.Column="1" Grid.Row="1"  >
-        </RichTextBox /-->
-        <UniformGrid Grid.Column="1" Grid.Row="1" DataContext="{Binding SelectedResult}">
+        <RichTextBox x:Name="richTextBox1" Grid.Column="1" Grid.Row="1"  VerticalScrollBarVisibility="Auto">
+        </RichTextBox >
+        <RichTextBox x:Name="richTextBox2" Grid.Column="2" Grid.Row="1"  VerticalScrollBarVisibility="Auto">
+        </RichTextBox >
+        <!--UniformGrid Grid.Column="1" Grid.Row="1" DataContext="{Binding SelectedResult}">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <TextBlock Text="{Binding Path=Text_File1}" TextWrapping="WrapWithOverflow"/>
+                <TextBlock Margin="5" Text="{Binding Path=Text_File1}" TextWrapping="WrapWithOverflow"/>
             </ScrollViewer>
-        </UniformGrid>
+        </UniformGrid >
         <UniformGrid Grid.Column="2" Grid.Row="1" DataContext="{Binding SelectedResult}">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <TextBlock Text="{Binding Path=Text_File2}" TextWrapping="WrapWithOverflow"/>
+                <TextBlock Margin="5" Text="{Binding Path=Text_File2}" TextWrapping="WrapWithOverflow"/>
             </ScrollViewer>
-        </UniformGrid>
+        </UniformGrid /-->
     </Grid>
 </Window>

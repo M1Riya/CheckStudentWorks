@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace WpfCheckStudentWorks
@@ -17,6 +13,7 @@ namespace WpfCheckStudentWorks
         string text2;
         string path2;
         double result;
+        List<string> match;
         public string File1_name
         {
             get => file1;
@@ -80,6 +77,15 @@ namespace WpfCheckStudentWorks
                 OnPropertyChanged("Result");
             }
         }
+        public List<string> Match
+        {
+            get => match;
+            set
+            {
+                match = value;
+                OnPropertyChanged("Match");
+            }
+        }
         public CheckResultInformation(string file1, string path1, string text1, string file2, string path2, string text2, double res)
         {
             File1_name = file1;
@@ -89,6 +95,7 @@ namespace WpfCheckStudentWorks
             Text_File2 = text2;
             Path_File2 = path2;
             Result = res;
+            this.match = new List<string>();
         }
         public void OnPropertyChanged(string prop = "")
         {

@@ -6,19 +6,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Windows.Input;
 
 namespace WpfCheckStudentWorks
 {
     public class ViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        CheckResultInformation selectedResult; 
+        CheckResultInformation selectedResult;
+        string selectedPercent;
         BaseCommand openCommand;
         BaseCommand openCommandFolder;
         BaseCommand runCommand;
         DialogWindow dialogW;
-        List<TextInformation> allText = new List<TextInformation>();
-        string selectedPercent;
+        List<TextInformation> allText = new List<TextInformation>();     
         public CheckResultInformation SelectedResult
         {
             get => selectedResult;
@@ -42,7 +43,6 @@ namespace WpfCheckStudentWorks
         {
             dialogW = d;
             checkStudWorkAllInf = new ObservableCollection<CheckResultInformation>();
-
         }
         public void OnPropertyChanged(string prop = "")
         {
@@ -55,7 +55,6 @@ namespace WpfCheckStudentWorks
             {
                 return openCommandFolder ?? (openCommandFolder = new BaseCommand(obj =>
                 {
-
                     if (dialogW.OpenFolderDialog() == true)
                     {
                         allText.Clear();
@@ -64,20 +63,20 @@ namespace WpfCheckStudentWorks
                         {
                             string text = "";
                             string extension = currentFile.Substring(currentFile.IndexOf('.'));
+                            TextInformation inf = new TextInformation();
 
                             if (extension == ".docx")
                             { text = OpenWordprocessingDocumentReadonly(currentFile); }
                             else if (extension == ".pdf")
                             { text = OpenPdfMethod(currentFile); }
-
-                            TextInformation inf = new TextInformation();
+                            else continue;
+                            
                             inf.Text = text;
                             inf.FileName = Path.GetFileName(currentFile);
                             inf.FilePath = Path.GetFullPath(currentFile);
 
                             allText.Add(inf);
                         }
-
                     }
                 }));
             }
@@ -89,7 +88,6 @@ namespace WpfCheckStudentWorks
             {
                 return openCommand ?? (openCommand = new BaseCommand(obj =>
                 {
-
                     if (dialogW.OpenFileDialog() == true)
                     {
                         allText.Clear();
@@ -102,6 +100,7 @@ namespace WpfCheckStudentWorks
                             { text = OpenWordprocessingDocumentReadonly(currentFile); }
                             else if (extension == ".pdf")
                             { text = OpenPdfMethod(currentFile); }
+                            else continue;
 
                             TextInformation inf = new TextInformation();
                             inf.Text = text;
@@ -110,7 +109,6 @@ namespace WpfCheckStudentWorks
 
                             allText.Add(inf);
                         }
-
                     }
                 }));
             }
@@ -124,7 +122,6 @@ namespace WpfCheckStudentWorks
                 return body.InnerText.ToString();
             }
             return "-1";
-
         }
         static string OpenPdfMethod(string filepath)     //работа с pdf
         {
@@ -143,6 +140,7 @@ namespace WpfCheckStudentWorks
                 {
                     if (allText != null)
                     {
+                        Mouse.OverrideCursor = Cursors.Wait;
                         checkStudWorkAllInf.Clear();
                         MethodShingles.ShinglCreate(allText);                       
                         int _percent = 0;
@@ -160,15 +158,16 @@ namespace WpfCheckStudentWorks
                                 {
                                     CheckResultInformation res = new CheckResultInformation(allText[i].FileName, allText[i].FilePath, allText[i].Text, 
                                                                     allText[j].FileName, allText[j].FilePath, allText[j].Text, checkResult);
+                                    res.Match.AddRange(MethodShingles.SearchMatch(i, j).ToArray());
                                     checkStudWorkAllInf.Add(res);
                                 }
                             }
+                        Mouse.OverrideCursor = Cursors.Arrow;
                     }
 
                 }));
             }
         }
-
 
     }
 }

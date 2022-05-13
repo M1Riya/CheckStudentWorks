@@ -1,8 +1,9 @@
-﻿using System;
+﻿using SimMetrics.Net.Metric;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace WpfCheckStudentWorks
 {
@@ -12,7 +13,7 @@ namespace WpfCheckStudentWorks
         public static void ShinglCreate(List<TextInformation> inf)
         {
             checkSum.Clear();
-            int shingleLen = 5;                                     // или 6?
+            int shingleLen = 5;                                     
             for (int i = 0; i < inf.Count; i++)
             {
                 string[] words = Canonizator.TextCanonization(inf[i].Text);
@@ -32,7 +33,6 @@ namespace WpfCheckStudentWorks
                 }
             }
         }
-
         static string ShingleEncode(string shingle)
         {
             /*var md5 = MD5.Create();                                                 //MD5 алгоритм
@@ -51,81 +51,112 @@ namespace WpfCheckStudentWorks
             for (int j = 0; j < checkSum[text_2].HashShingle.Count; j++)
                 if (!checkSum[text_1].HashShingle.Exists(o => o == checkSum[text_2].HashShingle[j]))
                     different++;
-            List<string> match = new List<string>();
             double same = 0;
             for (int j = 0; j < checkSum[text_1].HashShingle.Count; j++)
                 if (checkSum[text_2].HashShingle.Exists(o => o == checkSum[text_1].HashShingle[j]))
                 {
                     same++;
+                }
+            int A = checkSum[text_1].HashShingle.Count;
+            int B = checkSum[text_2].HashShingle.Count;
+            //return Math.Round(same / different * 100, 1);
+            return Math.Round((2*same) /(A + B - Math.Abs(A - B)) * 100, 1);
+        }
+        public static List<string> SearchMatch (int text_1, int text_2)
+        {
+            List<string> match = new List<string>();
+            for (int j = 0; j < checkSum[text_1].HashShingle.Count; j++)
+                if (checkSum[text_2].HashShingle.Exists(o => o == checkSum[text_1].HashShingle[j]))
+                {
                     match.Add(checkSum[text_1].OriginShingle[j]);
                 }
 
-            //if (Math.Round(same / different * 100, 1)>2)
-             // OutputMatchedText(checkSum[text_1].Text, checkSum[text_2].Text, match);
-
-            return Math.Round(same / different * 100, 1);
+            return match.Distinct().ToList();
         }
 
-        static void OutputMatchedText(string text1, string text2, List<string> match)           //может вытащить во viewmodel?
+        // returns list of the original matched strings
+        public static List<string> OutputMatchedText(string text,  List<string> match)           
         {
+            string[] txtWords = text.Replace("\n", "").Replace("\r", " ").Split(' ');
 
-            string[] txt1Words = text1.Replace("\n", "").Replace("\r", " ").Split(' ');
-            string[] txt2Words = text2.Replace("\n", "").Replace("\r", " ").Split(' ');
+            List<string> txtShingle = new List<string>();
 
-            List<string> txt1Shingle = new List<string>();
-            List<string> txt2Shingle = new List<string>();
-
-            for (int j = 0; j <= txt1Words.Length - 10; j++)
+            for (int j = 0; j <= txtWords.Length - 10; j++)
             {
-                string shingleString = string.Join(" ", txt1Words, j, 10);
-                txt1Shingle.Add(shingleString);
+                string shingleString = string.Join(" ", txtWords, j, 10);
+                txtShingle.Add(shingleString);
             }
 
-            for (int j = 0; j <= txt2Words.Length - 10; j++)
-            {
-                string shingleString = string.Join(" ", txt2Words, j, 10);
-                txt2Shingle.Add(shingleString);
-            }
+            List<string> resultText = new List<string>();
 
-            List<string> resultText1 = new List<string>();
-            List<string> resultText2 = new List<string>();
-            int temp;
+            int tmp = 0;
+            Thread[] thr = new Thread[4];
+            for (int i = 0; i < 4; i++)
+            {
+                var tuple = new Tuple<int, List<string>, List<string>, List<string>>(tmp, match, txtShingle, resultText);
+                thr[i] = new Thread(ThreadSearchMatch);
+                thr[i].Start(tuple);
+                tmp += 1;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                if (thr[i].IsAlive)
+                {
+                    thr[i].Join();
+                }
+            }
+            /*JaroWinkler jaroW = new JaroWinkler();
+            double temp;
             int index = 0;
             for (int i = 0; i < match.Count; i++)
             {
-                int min = int.MaxValue;
-                for (int j = 0; j < txt1Shingle.Count; j++)
+                //double min = int.MaxValue;
+                double max = -1;
+                for (int j = 0; j < txtShingle.Count; j++)
                 {
-                    temp = DamerauLevenshteinDistance(match[i], txt1Shingle[j]);
-                    if (temp < min)
+                    //temp = DamerauLevenshteinDistance(match[i], txt1Shingle[j]);
+                    temp = jaroW.GetSimilarity(match[i], txtShingle[j]);
+                    if (temp > max)
                     {
-                        min = temp;
+                        max = temp;
                         index = j;
                     }
                 }
-                resultText1.Add(txt1Shingle[index]);
+                resultText.Add(txtShingle[index]);
+            }*/
 
-                int min2 = int.MaxValue;
-                for (int j = 0; j < txt2Shingle.Count; j++)
+            return resultText.Distinct().ToList();
+        }
+        static void ThreadSearchMatch (object o)
+        {
+            var allinf = (Tuple<int, List<string>, List<string>, List<string>>)o;
+            int start = allinf.Item1;
+            List<string> match = allinf.Item2;
+            List<string> txtShingle = allinf.Item3;
+            List<string> resultText = allinf.Item4;
+
+            JaroWinkler jaroW = new JaroWinkler();
+            double temp;
+            int index = 0;
+            for (int i = start; i < match.Count; i+=4)
+            {
+                //double min = int.MaxValue;
+                double max = -1;
+                for (int j = 0; j < txtShingle.Count; j++)
                 {
-                    temp = DamerauLevenshteinDistance(match[i], txt2Shingle[j]);
-                    if (temp < min2)
+                    //temp = DamerauLevenshteinDistance(match[i], txtShingle[j]);
+                    temp = jaroW.GetSimilarity(match[i], txtShingle[j]);
+                    if (temp > max)
                     {
-                        min2 = temp;
+                        max = temp;
                         index = j;
                     }
                 }
-                resultText2.Add(txt2Shingle[index]);
+                lock ("write")
+                {
+                    resultText.Add(txtShingle[index]);
+                }
             }
-
-            resultText1 = resultText1.Distinct().ToList();
-            resultText2 = resultText2.Distinct().ToList();
-
-            foreach (var x in resultText1)
-                Console.WriteLine(x);
-            Console.WriteLine("=====================================================");
-            foreach (var x in resultText2)
-                Console.WriteLine(x);
         }
 
         static int Minimum(int a, int b) => a < b ? a : b;
@@ -153,16 +184,16 @@ namespace WpfCheckStudentWorks
                 {
                     var cost = firstText[i - 1] == secondText[j - 1] ? 0 : 1;
 
-                    arrayD[i, j] = Minimum(arrayD[i - 1, j] + 1,          // удаление
-                                            arrayD[i, j - 1] + 1,         // вставка
-                                            arrayD[i - 1, j - 1] + cost); // замена
+                    arrayD[i, j] = Minimum(arrayD[i - 1, j] + 1,        
+                                            arrayD[i, j - 1] + 1,       
+                                            arrayD[i - 1, j - 1] + cost);
 
                     if (i > 1 && j > 1
                         && firstText[i - 1] == secondText[j - 2]
                         && firstText[i - 2] == secondText[j - 1])
                     {
                         arrayD[i, j] = Minimum(arrayD[i, j],
-                                           arrayD[i - 2, j - 2] + cost); // перестановка
+                                           arrayD[i - 2, j - 2] + cost);
                     }
                 }
             }
