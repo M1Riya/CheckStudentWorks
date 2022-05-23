@@ -18,8 +18,7 @@ namespace WpfCheckStudentWorks
             {
                 string[] words = Canonizator.TextCanonization(inf[i].Text);
 
-                checkSum.Add(new CheckSumInformation());
-                checkSum[i].FileName = inf[i].FileName;
+                checkSum.Add(new CheckSumInformation());                
                 checkSum[i].Text = inf[i].Text;
 
                 for (int j = 0; j <= words.Length - shingleLen; j++)
@@ -35,10 +34,6 @@ namespace WpfCheckStudentWorks
         }
         static string ShingleEncode(string shingle)
         {
-            /*var md5 = MD5.Create();                                                 //MD5 алгоритм
-            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(shingle));
-            string res = Convert.ToBase64String(hash);*/
-
             var arrayOfBytes = Encoding.UTF8.GetBytes(shingle);         //Crc32 алгоритм. НИЖЕ ВЕРОЯТНОСТЬ КОЛЛИЗИЙ
             var crc32 = new Crc32();
             string res = crc32.Get(arrayOfBytes).ToString("X");
@@ -48,9 +43,9 @@ namespace WpfCheckStudentWorks
         public static double CheckSumCompair(int text_1, int text_2)
         {
             double different = checkSum[text_1].HashShingle.Count;
-            for (int j = 0; j < checkSum[text_2].HashShingle.Count; j++)
-                if (!checkSum[text_1].HashShingle.Exists(o => o == checkSum[text_2].HashShingle[j]))
-                    different++;
+            //for (int j = 0; j < checkSum[text_2].HashShingle.Count; j++)
+               // if (!checkSum[text_1].HashShingle.Exists(o => o == checkSum[text_2].HashShingle[j]))
+                    //different++;
             double same = 0;
             for (int j = 0; j < checkSum[text_1].HashShingle.Count; j++)
                 if (checkSum[text_2].HashShingle.Exists(o => o == checkSum[text_1].HashShingle[j]))
@@ -60,7 +55,7 @@ namespace WpfCheckStudentWorks
             int A = checkSum[text_1].HashShingle.Count;
             int B = checkSum[text_2].HashShingle.Count;
             //return Math.Round(same / different * 100, 1);
-            return Math.Round((2*same) /(A + B - Math.Abs(A - B)) * 100, 1);
+            return Math.Round(2*same /(A + B - Math.Abs(A - B)) * 100, 1);
         }
         public static List<string> SearchMatch (int text_1, int text_2)
         {
@@ -100,31 +95,9 @@ namespace WpfCheckStudentWorks
             }
             for (int i = 0; i < 4; i++)
             {
-                if (thr[i].IsAlive)
-                {
-                    thr[i].Join();
-                }
+                if (thr[i].IsAlive) thr[i].Join();
+                
             }
-            /*JaroWinkler jaroW = new JaroWinkler();
-            double temp;
-            int index = 0;
-            for (int i = 0; i < match.Count; i++)
-            {
-                //double min = int.MaxValue;
-                double max = -1;
-                for (int j = 0; j < txtShingle.Count; j++)
-                {
-                    //temp = DamerauLevenshteinDistance(match[i], txt1Shingle[j]);
-                    temp = jaroW.GetSimilarity(match[i], txtShingle[j]);
-                    if (temp > max)
-                    {
-                        max = temp;
-                        index = j;
-                    }
-                }
-                resultText.Add(txtShingle[index]);
-            }*/
-
             return resultText.Distinct().ToList();
         }
         static void ThreadSearchMatch (object o)

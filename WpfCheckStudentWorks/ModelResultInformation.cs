@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 
 namespace WpfCheckStudentWorks
 {
-    public class CheckResultInformation : INotifyPropertyChanged
+    public class ModelResultInformation : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         string file1;
@@ -86,17 +87,18 @@ namespace WpfCheckStudentWorks
                 OnPropertyChanged("Match");
             }
         }
-        public CheckResultInformation(string file1, string path1, string text1, string file2, string path2, string text2, double res)
+        public ModelResultInformation( string path1, string text1, string path2, string text2, double res)
         {
-            File1_name = file1;
+            File1_name = Path.GetFileName(path1);
             Text_File1 = text1;
             Path_File1 = path1;
-            File2_name = file2;
+            File2_name = Path.GetFileName(path2);
             Text_File2 = text2;
             Path_File2 = path2;
             Result = res;
             this.match = new List<string>();
         }
+
         public void OnPropertyChanged(string prop = "")
         {
             if (PropertyChanged != null)

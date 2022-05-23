@@ -4,15 +4,9 @@ namespace WpfCheckStudentWorks
 {
     public class TextInformation
     {
-        string file_name;
         string file_path;
         string text;
 
-        public string FileName
-        {
-            get => file_name; 
-            set => file_name = value; 
-        }
         public string FilePath
         {
             get =>  file_path; 

@@ -4,16 +4,10 @@ namespace WpfCheckStudentWorks
 {
     public class CheckSumInformation        //сделаьть наследование от TextInformation?
     {
-        string file_name;
+        
         string text;
         List<string> hash_shingle;
         List<string> origin_shingle;
-
-        public string FileName
-        {
-            get => file_name; 
-            set => file_name = value; 
-        }
 
         public string Text
         {
