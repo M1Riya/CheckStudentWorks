@@ -1,2 +1,2 @@
 # CheckStudentWorks
-WPF application for checking text works for internal plagiarism
+WPF application for checking text works in Russian to detect internal plagiarism
