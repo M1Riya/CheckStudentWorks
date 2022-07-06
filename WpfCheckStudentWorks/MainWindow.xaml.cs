@@ -39,6 +39,7 @@ namespace WpfCheckStudentWorks
             List<string> fragments1 = MethodShingles.OutputMatchedText(inf.Text_File1, inf.Match);
             List<string> fragments2 = MethodShingles.OutputMatchedText(inf.Text_File2, inf.Match);
 
+           
             try
             {
                 // output to secon rich text box
@@ -49,18 +50,18 @@ namespace WpfCheckStudentWorks
                     if (extension1 == ".docx")
                     {
                         ViewModel.LoadWordToRichTextBox(richTextBox1, inf.Path_File1);
-                            HilightFragments(fragments1, richTextBox1);
+                            ViewModel.HighlightRichText(fragments1, richTextBox1);
                     }
                     else if (extension1 == ".pdf")
                     {
                         SubWindow subWindow = new SubWindow(inf.Path_File1);
                         subWindow.Show();
-                        ViewModel.HilightText(inf.Path_File1, fragments1);
+                        ViewModel.HighlightTextPdf(inf.Path_File1, fragments1);
                     }
                     });
                 });
                 thr1.Start();
-                // output to secon rich text box
+                // output to second rich text box
                 Thread thr2 = new Thread(_ =>
                 {
                     this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
@@ -68,13 +69,13 @@ namespace WpfCheckStudentWorks
                         if (extension2 == ".docx")
                         {
                             ViewModel.LoadWordToRichTextBox(richTextBox2, inf.Path_File2);
-                            HilightFragments(fragments2, richTextBox2);
+                            ViewModel.HighlightRichText(fragments2, richTextBox2);
                         }
                         else if (extension2 == ".pdf")
                         {
                             SubWindow subWindow = new SubWindow(inf.Path_File2);
                             subWindow.Show();
-                            ViewModel.HilightText(inf.Path_File2, fragments2);
+                            ViewModel.HighlightTextPdf(inf.Path_File2, fragments2);
                         }
                     });
                 });
@@ -93,39 +94,6 @@ namespace WpfCheckStudentWorks
             Debug.WriteLine($"Время выполнения: {ts.TotalMilliseconds}");
 
             Mouse.OverrideCursor = Cursors.Arrow;
-        }
-        static void HilightFragments(List<string> fragments, System.Windows.Controls.RichTextBox rt)
-        {
-            TextRange text = new TextRange(rt.Document.ContentStart, rt.Document.ContentEnd);
-            //text.ClearAllProperties();
-            string textBoxText = text.Text;
-
-            if (!string.IsNullOrWhiteSpace(textBoxText))
-            {
-                foreach (string fr in fragments)
-                {
-                    TextPointer current = rt.Document.ContentStart;
-                    while (current != null)
-                    {
-                        string parsedString = current.GetTextInRun(LogicalDirection.Forward);
-                        if (!string.IsNullOrWhiteSpace(parsedString))
-                        {
-                            int index = parsedString.IndexOf(fr);
-                            if (index >= 0)
-                            {
-                                TextPointer selectionStart = current.GetPositionAtOffset(index);
-                                if (selectionStart != null)
-                                {
-                                    TextPointer selectionEnd = selectionStart.GetPositionAtOffset(fr.Length);
-                                    TextRange selection = new TextRange(selectionStart, selectionEnd);
-                                    selection.ApplyPropertyValue(TextElement.BackgroundProperty, new SolidColorBrush(Colors.Yellow));
-                                }
-                            }
-                        }
-                        current = current.GetNextContextPosition(LogicalDirection.Forward);
-                    }
-                }
-            }
-        }
+        }      
     }
 }

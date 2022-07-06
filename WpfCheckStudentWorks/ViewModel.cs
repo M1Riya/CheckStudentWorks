@@ -2,17 +2,15 @@
 using DocumentFormat.OpenXml.Wordprocessing;
 using Spire.Pdf;
 using Spire.Pdf.General.Find;
-using Spire.Pdf.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Threading;
+using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Threading;
+using System.Windows.Media;
 
 namespace WpfCheckStudentWorks
 {
@@ -156,20 +154,6 @@ namespace WpfCheckStudentWorks
                             _percent = Convert.ToInt32(percent.Substring(0, percent.IndexOf('%')));
                         }
 
-                        /* int tmp = 0;
-                         Thread[] thr = new Thread[4];
-                         for (int i = 0; i < 4; i++)
-                         {
-                             var tuple = new Tuple<int, List<TextInformation>, int>(tmp, allText, _percent);
-                             thr[i] = new Thread(ThreadCheckCompair);
-                             thr[i].Start(tuple);
-                             tmp += 1;
-                         }
-                         for (int i = 0; i < 4; i++)
-                         {
-                             if (thr[i].IsAlive) thr[i].Join();
-
-                         }*/
                         for (int i = 0; i < allText.Count - 1; i++)
                             for (int j = i + 1; j < allText.Count; j++)
                             {
@@ -192,31 +176,6 @@ namespace WpfCheckStudentWorks
                 }));
             }
         }
-        /*void ThreadCheckCompair(object o)
-        {
-            var allinf = (Tuple<int, List<TextInformation>, int>)o;
-            int start = allinf.Item1;
-            List<TextInformation> allText = allinf.Item2;
-            int _percent = allinf.Item3;
-
-            for (int i = start; i < allText.Count - 1; i += 4)
-                for (int j = i + 1; j < allText.Count; j++)
-                {
-                    double checkResult = MethodShingles.CheckSumCompair(i, j);
-
-                    if (checkResult > _percent)
-                    {
-                        ModelResultInformation res = new ModelResultInformation(allText[i].FilePath, allText[i].Text,
-                                                         allText[j].FilePath, allText[j].Text, checkResult);
-                        res.Match.AddRange(MethodShingles.SearchMatch(i, j).ToArray());
-                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                        {
-                            checkStudWorkAllInf.Add(res);
-                        });
-                    }
-                }
-
-        }*/
 
         public static void OnWindowClosing(object sender, CancelEventArgs e)
         {
@@ -227,7 +186,7 @@ namespace WpfCheckStudentWorks
             if (path != null)
                 File.Delete(path);
         }
-        public static void HilightText(string path, List<string> fragments)
+        public static void HighlightTextPdf(string path, List<string> fragments)
         {
             Spire.Pdf.PdfDocument pdf = new Spire.Pdf.PdfDocument(path);
           
@@ -239,13 +198,37 @@ namespace WpfCheckStudentWorks
 
                     foreach (PdfTextFind find in result.Finds)
                     {
-                        //find.ApplyHighLight(System.Drawing.Color.LightYellow);
 
                         find.ApplyRecoverString(fr, System.Drawing.Color.Yellow, true);
                     }
                 }
             }
             pdf.SaveToFile(Path.GetDirectoryName(path) + "\\1" + Path.GetFileName(path));
+        }
+        public static void HighlightRichText(List<string> fragments, System.Windows.Controls.RichTextBox rt)
+        {
+            TextRange text = new TextRange(rt.Document.ContentStart, rt.Document.ContentEnd);
+            text.ClearAllProperties();
+            string textBoxText = text.Text;
+
+            if (!string.IsNullOrWhiteSpace(textBoxText))
+            {
+                foreach (string fr in fragments)
+                {
+                    TextPointer current = rt.Document.ContentStart;
+                    while (true)
+                    {
+                        var searchRange = new TextRange(current, rt.Document.ContentEnd);
+                        TextRange foundRange = searchRange.FindText(fr);
+                        if (foundRange == null)
+                            break;
+                        foundRange.ApplyPropertyValue(TextElement.BackgroundProperty, new SolidColorBrush(Colors.Yellow));
+
+                        current = foundRange.End;
+                    }
+                    rt.Focus();
+                }
+            }
         }
         public static void LoadWordToRichTextBox(System.Windows.Controls.RichTextBox rt, string path)
         {

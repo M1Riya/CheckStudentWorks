@@ -2,7 +2,7 @@
 
 namespace WpfCheckStudentWorks
 {
-    public class CheckSumInformation        //сделаьть наследование от TextInformation?
+    public class CheckSumInformation        
     {
         
         string text;
